@@ -19,28 +19,39 @@ def plot_SDT_measures_by_conditions(data):
     including HR, FAR, criterion and sensitivity under different
     expectation and attention conditions. 
     '''
-    fig, axes = plt.subplots(1,4,figsize = (6,2), sharex=True)        
+    fig, axes = plt.subplots(1,4,figsize = (6,2))        
     for i, bhv in enumerate(["Hit", "FA", "d", "c"]):
         #row, col=divmod(i,2)
         sns.stripplot(data = df, x = 'expectation_condition', y = bhv,
                         hue='attention_condition', order=['Expect Scrambled', 'Expect Real'],
-                        alpha = 0.3, size = 3, ax = axes[i], zorder = 1)
+                        alpha = 0.3, size = 3, dodge=True, ax = axes[i], zorder = 1)
         sns.pointplot(data = df, x = 'expectation_condition', y = bhv,
                         hue='attention_condition', order=['Expect Scrambled', 'Expect Real'],
                         errorbar= ('ci', 95), ax = axes[i],
                         linewidth=1, markersize=5, dodge = True, zorder=2)
           
-        if bhv == "Hit" or bhv =="FA":
+        if bhv in ["Hit", "FA"]:
             axes[i].set_yticks(np.arange(0, 1.2, 0.2))
+        if bhv == 'Hit':    
             axes[i].axhline(y=0.5, linestyle='--', color = 'black', linewidth=1)
-        elif bhv == "d" or bhv =="c":
+            axes[i].set_ylabel("HR")
+        elif bhv == "FA":
+            axes[i].set_ylabel("FA")
+        elif bhv == "d":
+            axes[i].set_ylabel("d'")
+            #axes[i].set_yticks([])  # Remove y-ticks for better visualization
+        elif bhv == "c":
+            axes[i].set_ylabel("c")
+            #axes[i].set_yticks([])  # Remove y-ticks for better visualization
+        else:
             pass
+       
         axes[i].spines['top'].set_visible(False)
         axes[i].spines['right'].set_visible(False)
         axes[i].spines['left'].set_position(('outward',5))
         axes[i].spines['bottom'].set_position(('outward', 5))
         axes[i].set_xticklabels(["Expect scr", "Expect real"], 
-                                       rotation = 20)
+                                       rotation = 45)
         axes[i].set_xlabel("")
         #axes[i].set_yticklabels(fontsize = 7)
          # Hide legend for subplots
@@ -66,7 +77,7 @@ def plot_bhv_by_conditions(data):
             #row, col=divmod(counter,2)
             sns.stripplot(data = data, x = 'expectation_condition', y = data.columns[-1],
                             hue='attention_condition', order=['Expect Scrambled', 'Expect Real'],
-                            alpha = 0.3, size = 3, ax = axes[counter], zorder = 1)
+                            alpha = 0.3, size = 3, dodge=True, ax = axes[counter], zorder = 1)
             sns.pointplot(data = data, x = 'expectation_condition', y = data.columns[-1],
                             hue='attention_condition', order=['Expect Scrambled', 'Expect Real'],
                             errorbar= ('ci', 95), ax = axes[counter], dodge=True,
@@ -112,7 +123,7 @@ def plot_bhv_by_conditions_split(data):
             #counter=divmod(counter,2)
             sns.stripplot(data = data, x = 'expectation_condition', y = data.columns[-1],
                             hue='attention_condition', order=['Expect Scrambled', 'Expect Real'],
-                            alpha = 0.3, size=3, ax = axes[counter], zorder =1)
+                            alpha = 0.3, size=3, dodge=True, ax = axes[counter], zorder =1)
             sns.pointplot(data = data, x = 'expectation_condition', y = data.columns[-1],
                             hue='attention_condition', order=['Expect Scrambled', 'Expect Real'],
                             errorbar= ('ci', 95), ax = axes[counter], 
@@ -132,7 +143,7 @@ def plot_bhv_by_conditions_split(data):
                 axes[counter].set_yticks(np.arange(0, 1.25, 0.25))
                 axes[counter].axhline(y=0.25, linestyle='--', color = 'black', linewidth=1)
                 axes[counter].spines['left'].set_bounds(0, 1)
-                axes[counter].set_ylabel("Non-Target Cat Acc")             
+                axes[counter].set_ylabel("Nontarget Cat Acc")             
             elif df.columns[-1] == 'confidence':
                 pass
             axes[counter].spines['left'].set_position(('outward',5))
@@ -153,13 +164,13 @@ def plot_bhv_by_conditions_split(data):
 # %%
 RootDir = "/isilon/LFMI/VMdrive/YuanHao/EASTO-Behavior" 
 DataDir = os.path.join(RootDir, "Data")
-exp_name = 'Exp3_non-neutral_'
+exp_name = 'Exp1_'
 
-df = pd.read_pickle(os.path.join(DataDir, exp_name + "SDT.pkl"))         
+df = pd.read_pickle(os.path.join(DataDir, exp_name + "SDT.pkl"))
 plot_SDT_measures_by_conditions(df)   
 plt.savefig(FigDir + exp_name + "SDT.svg", dpi=300, bbox_inches='tight')
 
-bhv_vars = ["Categorization"]
+bhv_vars = ["Confidence"]
 for i in bhv_vars:
     df = pd.read_pickle(os.path.join(DataDir, exp_name + i + ".pkl")) 
     plot_bhv_by_conditions(df)
@@ -168,6 +179,9 @@ for i in bhv_vars:
 bhv_vars = ["Recognition", "Non-Target_Categorization"]
 for i in bhv_vars:
     df = pd.read_pickle(os.path.join(DataDir, exp_name + i + "_by_NonTarget.pkl"))
+    df.loc[df['not_probe_real'].str.contains('Scr Non-Target', na=False), 'not_probe_real'] = 'Scr Nontarget'
+    df.loc[df['not_probe_real'].str.contains('Real Non-Target', na=False), 'not_probe_real'] = 'Real Nontarget'
+    
     plot_bhv_by_conditions_split(df)
     plt.savefig(FigDir + exp_name + i + '_by_NonTarget.svg', 
-                dpi=300, bbox_inches='tight')
+               dpi=300, bbox_inches='tight')
