@@ -13,11 +13,12 @@
 # %%
 #import pylab
 import os
+from os.path import join
 import sys
 RootDir = '/isilon/LFMI/VMdrive/YuanHao/EASTO-Behavior'
-AnalysisDir = os.path.join(RootDir, 'Analysis')
-DataDir = os.path.join(RootDir, 'Data')
-sys.path.append(AnalysisDir + '/EASTO_funcs/')
+AnalysisDir = join(RootDir, 'Analysis')
+DataDir = join(RootDir, 'Data')
+sys.path.append(join(AnalysisDir, 'EASTO_funcs'))
 
 import seaborn as sns
 import pandas as pd 
@@ -309,7 +310,7 @@ for rec_status in sorted(accuracy_df.recognition.unique()):
 #             data = dataDF,
 #             detailed = True,
 #             effsize = "np2"))
-# rec_accuracy_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Categorization_split.pkl"))
+#rec_accuracy_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Categorization_split.pkl"))
 #%% Confidence
 print("")
 print("***********************************************************************")
@@ -318,7 +319,7 @@ print(f'                  STATS FOR CONFIDENCE')
 print("***********************************************************************")
 print("***********************************************************************")
 
-group_choice =  ['recognition', 'probeReal','subject', exp_type, 'attention_condition']    
+group_choice =  ['recognition', 'probeReal','subject', 'expectation_condition', 'attention_condition']    
 conf_df = bhv_df.groupby(group_choice)['confidence'].mean()
 
 conf_df = conf_df.reset_index()
@@ -346,7 +347,7 @@ for rec_status in sorted(conf_df.recognition.unique()):
             subject = 'subject', data = dataDF,
             detailed = True, effsize = "np2"))
 
-#conf_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Confidence.pkl"))
+conf_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Confidence.pkl"))
 #%% Confidence Split by probed and not probed
 # group_choice =  ['not_probe_real', 'probeReal', 'recognition', 'subject', exp_type, 'attention_condition']
 # conf_df = bhv_df.groupby(group_choice)['confidence'].mean()
@@ -397,8 +398,8 @@ proportion_R = bhv_df.groupby(group_choice)['recognition'].mean()
 
 #Renaming variables for titles 
 rec_df = proportion_R.reset_index()
-rec_df.loc[rec_df.not_probe_real == 0,'not_probe_real'] = 'Scr Non-Target'
-rec_df.loc[rec_df.not_probe_real == 1,'not_probe_real'] = 'Real Non-Target'
+rec_df.loc[rec_df.not_probe_real == 0,'not_probe_real'] = 'Scr Nontarget'
+rec_df.loc[rec_df.not_probe_real == 1,'not_probe_real'] = 'Real Nontarget'
 
 rec_df.loc[rec_df.probeReal == 0,'probeReal'] = 'Scr Target'
 rec_df.loc[rec_df.probeReal == 1,'probeReal'] = 'Real Target'
@@ -483,7 +484,7 @@ for probe_id in sorted(rec_df.probeReal.unique()):
         #     att = cond[1]
         #     correctSlice = dataDF.loc[(dataDF.expectation_condition == exp) & (dataDF.attention_condition == att)].recognition
         #     print(pg.wilcoxon(correctSlice, np.repeat(0.25, len(correctSlice)), 'greater'))
-#rec_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Recognition_by_NonTarget.pkl"))
+rec_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Recognition_by_NonTarget.pkl"))
 
 
 
@@ -505,8 +506,8 @@ accuracy_df = correct_pd_group.reset_index()
 accuracy_df.loc[accuracy_df.recognition == 0,'recognition'] = 'Unrecognized'
 accuracy_df.loc[accuracy_df.recognition == 1,'recognition'] = 'Recognized'
 
-accuracy_df.loc[accuracy_df.not_probe_real == 0,'not_probe_real'] = 'Scr Non-Target'
-accuracy_df.loc[accuracy_df.not_probe_real == 1,'not_probe_real'] = 'Real Non-Target'
+accuracy_df.loc[accuracy_df.not_probe_real == 0,'not_probe_real'] = 'Scr Nontarget'
+accuracy_df.loc[accuracy_df.not_probe_real == 1,'not_probe_real'] = 'Real Nontarget'
 
 accuracy_df.loc[accuracy_df.probeReal == 0,'probeReal'] = 'Scr Target'
 accuracy_df.loc[accuracy_df.probeReal == 1,'probeReal'] = 'Real Target'
@@ -540,12 +541,12 @@ for probe_id in sorted(rec_accuracy_df.probeReal.unique()):
         print('ATTENDED ')
         print(f"MEAN: {np.mean(attended)}")
         print(f"CI: {CI(attended)}")
-        print(pg.ttest(attended-0.25,0, paired = True, alternative='greater'))
+        print(pg.ttest(attended-0.25,0, paired = True, alternative='two-sided'))
         print('******************************************')
         print('UNATTENDED') 
         print(f"MEAN: {np.mean(unattended)}")
         print(f"CI: {CI(unattended)}")
-        print(pg.ttest(unattended-0.25,0, paired = True, alternative='greater')) 
+        print(pg.ttest(unattended-0.25,0, paired = True, alternative='two-sided')) 
         print('******************************************')
         
         

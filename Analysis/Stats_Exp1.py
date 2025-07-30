@@ -31,7 +31,7 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-pd.options.display.float_format = '{:.3f}'.format
+pd.options.display.float_format = '{:.10f}'.format
 
 
 #Load processed data 
@@ -191,7 +191,7 @@ for i in ['Hit', 'FA', 'd', 'c']:
                 detailed = True, effsize = "np2"))
 #bhv_vars_df.to_pickle(os.path.join(DataDir, "Exp1_SDT.pkl"))
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# RECOGNITION RATE BY NON-TARGET STIMULUS IDENTITY
+# RECOGNITION RATE BY NON-TARGET STIMULUS IDENTITY (Fig 3B)
 ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 print("")
 print("***********************************************************************")
@@ -274,7 +274,7 @@ for probe_id in sorted(rec_df.probeReal.unique()):
 
 #rec_df.to_pickle(os.path.join(DataDir, "Exp1_Recognition_by_NonTarget.pkl"))
 #%% 
-# CATEGORIZATION ACCURACY BY HIT, FA, MISS, and CR
+# CATEGORIZATION ACCURACY BY HIT, FA, MISS, and CR (Fig 2B)
 print("")
 print("***********************************************************************")
 print("***********************************************************************")
@@ -340,69 +340,69 @@ for rec_status in sorted(accuracy_df.recognition.unique()):
             detailed = True,
             effsize = "np2"))
         
-accuracy_df.to_pickle(os.path.join(DataDir, "Exp1_Categorization.pkl"))
+#accuracy_df.to_pickle(os.path.join(DataDir, "Exp1_Categorization.pkl"))
 
 # %%
-# CATEGORIZATION ACCURACY BY NON-TARGET STIMULUS IDENTITY
-print("")
-print("***********************************************************************")
-print("***********************************************************************")
-print(f'CATEGORIZATION ACCURACY BY NON-TARGET STIMULUS IDENTITY')
-print("***********************************************************************")
-print("***********************************************************************")
+# # CATEGORIZATION ACCURACY BY NON-TARGET STIMULUS IDENTITY
+# print("")
+# print("***********************************************************************")
+# print("***********************************************************************")
+# print(f'CATEGORIZATION ACCURACY BY NON-TARGET STIMULUS IDENTITY')
+# print("***********************************************************************")
+# print("***********************************************************************")
 
-group_choice =  ['not_probe_real', 'probeReal', 'recognition', 'subject', exp_type, 'attention_condition']
-correct_pd_group = bhv_df.groupby(group_choice)['correct'].mean()
+# group_choice =  ['not_probe_real', 'probeReal', 'recognition', 'subject', exp_type, 'attention_condition']
+# correct_pd_group = bhv_df.groupby(group_choice)['correct'].mean()
 
-accuracy_df = correct_pd_group.reset_index()
+# accuracy_df = correct_pd_group.reset_index()
     
-#Rename Variables for Titles
-accuracy_df.loc[accuracy_df.recognition == 0,'recognition'] = 'Unrecognized'
-accuracy_df.loc[accuracy_df.recognition == 1,'recognition'] = 'Recognized'
+# #Rename Variables for Titles
+# accuracy_df.loc[accuracy_df.recognition == 0,'recognition'] = 'Unrecognized'
+# accuracy_df.loc[accuracy_df.recognition == 1,'recognition'] = 'Recognized'
 
-accuracy_df.loc[accuracy_df.not_probe_real == 0,'not_probe_real'] = 'Scr Non-Target'
-accuracy_df.loc[accuracy_df.not_probe_real == 1,'not_probe_real'] = 'Real Non-Target'
+# accuracy_df.loc[accuracy_df.not_probe_real == 0,'not_probe_real'] = 'Scr Non-Target'
+# accuracy_df.loc[accuracy_df.not_probe_real == 1,'not_probe_real'] = 'Real Non-Target'
 
-accuracy_df.loc[accuracy_df.probeReal == 0,'probeReal'] = 'Scr Target'
-accuracy_df.loc[accuracy_df.probeReal == 1,'probeReal'] = 'Real Target'
+# accuracy_df.loc[accuracy_df.probeReal == 0,'probeReal'] = 'Scr Target'
+# accuracy_df.loc[accuracy_df.probeReal == 1,'probeReal'] = 'Real Target'
 
-recognition_status = 'Recognized'
-rec_accuracy_df = accuracy_df.loc[accuracy_df.recognition == recognition_status]
+# recognition_status = 'Recognized'
+# rec_accuracy_df = accuracy_df.loc[accuracy_df.recognition == recognition_status]
 
-for probe_id in sorted(rec_accuracy_df.probeReal.unique()):
-    for not_probe_id in sorted(rec_accuracy_df.not_probe_real.unique()):
-        print("")
-        print("**************************************")
-        print(f'{probe_id} | {not_probe_id}')
-        print("**************************************")
-        dataDF = rec_accuracy_df.loc[(rec_accuracy_df.probeReal == probe_id) &
-                            (rec_accuracy_df.not_probe_real == not_probe_id)]
+# for probe_id in sorted(rec_accuracy_df.probeReal.unique()):
+#     for not_probe_id in sorted(rec_accuracy_df.not_probe_real.unique()):
+#         print("")
+#         print("**************************************")
+#         print(f'{probe_id} | {not_probe_id}')
+#         print("**************************************")
+#         dataDF = rec_accuracy_df.loc[(rec_accuracy_df.probeReal == probe_id) &
+#                             (rec_accuracy_df.not_probe_real == not_probe_id)]
         
-        attended = dataDF[dataDF['attention_condition']=="Attended"]
-        attended = attended.groupby('subject')['correct'].mean()
-        unattended = dataDF[dataDF['attention_condition']=="Unattended"]
-        unattended = unattended.groupby('subject')['correct'].mean()
-        
-        
-        
-        print('ATTENDED ')
-        print(f"MEAN: {np.mean(attended)}")
-        print(f"CI: {CI(attended)}")
-        print('******************************************')
-        print('UNATTENDED') 
-        print(f"MEAN: {np.mean(unattended)}")
-        print(f"CI: {CI(unattended)}")
-        print('******************************************')
+#         attended = dataDF[dataDF['attention_condition']=="Attended"]
+#         attended = attended.groupby('subject')['correct'].mean()
+#         unattended = dataDF[dataDF['attention_condition']=="Unattended"]
+#         unattended = unattended.groupby('subject')['correct'].mean()
         
         
-        #print(dataDF.groupby(["expectation_condition", "attention_condition"])['correct'].mean())
-        print(pg.rm_anova(dv = 'correct', 
-            within = ['attention_condition', 'expectation_condition'],
-            subject = 'subject',
-            data = dataDF,
-            detailed = True,
-            effsize = "np2"))
-rec_accuracy_df.to_pickle(os.path.join(DataDir, "Exp1_Categorization_by_NonTarget.pkl"))
+        
+#         print('ATTENDED ')
+#         print(f"MEAN: {np.mean(attended)}")
+#         print(f"CI: {CI(attended)}")
+#         print('******************************************')
+#         print('UNATTENDED') 
+#         print(f"MEAN: {np.mean(unattended)}")
+#         print(f"CI: {CI(unattended)}")
+#         print('******************************************')
+        
+        
+#         #print(dataDF.groupby(["expectation_condition", "attention_condition"])['correct'].mean())
+#         print(pg.rm_anova(dv = 'correct', 
+#             within = ['attention_condition', 'expectation_condition'],
+#             subject = 'subject',
+#             data = dataDF,
+#             detailed = True,
+#             effsize = "np2"))
+#rec_accuracy_df.to_pickle(os.path.join(DataDir, "Exp1_Categorization_by_NonTarget.pkl"))
 #%% Confidence
 group_choice =  ['recognition', 'probeReal','subject', exp_type, 'attention_condition']    
 conf_df = bhv_df.groupby(group_choice)['confidence'].mean()
@@ -462,43 +462,43 @@ for rec_status in conf_df.recognition.unique():
             subject = 'subject', data = dataDF,
             detailed = True, effsize = "np2"))
 
-conf_df.to_pickle(os.path.join(DataDir, "Exp1_Confidence.pkl"))
+#conf_df.to_pickle(os.path.join(DataDir, "Exp1_Confidence.pkl"))
 #%% Confidence Split by probed and not probed
-group_choice =  ['not_probe_real', 'probeReal', 'recognition', 'subject', exp_type, 'attention_condition']
-conf_df = bhv_df.groupby(group_choice)['confidence'].mean()
+# group_choice =  ['not_probe_real', 'probeReal', 'recognition', 'subject', exp_type, 'attention_condition']
+# conf_df = bhv_df.groupby(group_choice)['confidence'].mean()
 
-conf_df = conf_df.reset_index()
+# conf_df = conf_df.reset_index()
     
-#Rename Variables for Titles
-conf_df.loc[conf_df.recognition == 0,'recognition'] = 'Unrecognized'
-conf_df.loc[conf_df.recognition == 1,'recognition'] = 'Recognized'
+# #Rename Variables for Titles
+# conf_df.loc[conf_df.recognition == 0,'recognition'] = 'Unrecognized'
+# conf_df.loc[conf_df.recognition == 1,'recognition'] = 'Recognized'
 
-conf_df.loc[conf_df.not_probe_real == 0,'not_probe_real'] = 'Scr Non-Target'
-conf_df.loc[conf_df.not_probe_real == 1,'not_probe_real'] = 'Real Non-Target'
+# conf_df.loc[conf_df.not_probe_real == 0,'not_probe_real'] = 'Scr Non-Target'
+# conf_df.loc[conf_df.not_probe_real == 1,'not_probe_real'] = 'Real Non-Target'
 
-conf_df.loc[conf_df.probeReal == 0,'probeReal'] = 'Scrambled Target'
-conf_df.loc[conf_df.probeReal == 1,'probeReal'] = 'Real Target'
+# conf_df.loc[conf_df.probeReal == 0,'probeReal'] = 'Scrambled Target'
+# conf_df.loc[conf_df.probeReal == 1,'probeReal'] = 'Real Target'
 
-recognition_status = 'Recognized'
-rec_conf_df = conf_df.loc[conf_df.recognition == recognition_status]
+# recognition_status = 'Recognized'
+# rec_conf_df = conf_df.loc[conf_df.recognition == recognition_status]
 
-for not_probe_id in rec_conf_df.not_probe_real.unique():
-    for probe_id in rec_conf_df.probeReal.unique():
-        print("")
-        print('**************************************')
-        print(f'Stats for {not_probe_id} | {probe_id}')
-        print('**************************************')
-        dataDF = rec_conf_df.loc[(rec_conf_df.probeReal == probe_id) &
-                            (rec_conf_df.not_probe_real == not_probe_id)]
-        print(dataDF.groupby(['expectation_condition', 'attention_condition'])['confidence'].mean())
-        print(dataDF.groupby(['expectation_condition', 'attention_condition'])['confidence'].apply(CI))
+# for not_probe_id in rec_conf_df.not_probe_real.unique():
+#     for probe_id in rec_conf_df.probeReal.unique():
+#         print("")
+#         print('**************************************')
+#         print(f'Stats for {not_probe_id} | {probe_id}')
+#         print('**************************************')
+#         dataDF = rec_conf_df.loc[(rec_conf_df.probeReal == probe_id) &
+#                             (rec_conf_df.not_probe_real == not_probe_id)]
+#         print(dataDF.groupby(['expectation_condition', 'attention_condition'])['confidence'].mean())
+#         print(dataDF.groupby(['expectation_condition', 'attention_condition'])['confidence'].apply(CI))
         
         
-        print(pg.rm_anova(dv = 'confidence', 
-            within = ['attention_condition', 'expectation_condition'],
-            subject = 'subject', data = dataDF, detailed = True,
-            correction = True, effsize = "np2"))       
-rec_conf_df.to_pickle(os.path.join(DataDir, 'Confidence_2x2conds_split.pkl'))
+#         print(pg.rm_anova(dv = 'confidence', 
+#             within = ['attention_condition', 'expectation_condition'],
+#             subject = 'subject', data = dataDF, detailed = True,
+#             correction = True, effsize = "np2"))       
+# #rec_conf_df.to_pickle(os.path.join(DataDir, 'Confidence_2x2conds_split.pkl'))
 
 # %%
 # CATEGORIZATION ACCURACY BY NON-TARGET STIMULUS IDENTITY
@@ -579,4 +579,4 @@ for probe_id in sorted(rec_accuracy_df.probeReal.unique()):
             detailed = True,
             effsize = "np2"))
            
-rec_accuracy_df.to_pickle(os.path.join(DataDir, "Exp1_Non-Target_Categorization_by_NonTarget.pkl"))
+#rec_accuracy_df.to_pickle(os.path.join(DataDir, "Exp1_Non-Target_Categorization_by_NonTarget.pkl"))

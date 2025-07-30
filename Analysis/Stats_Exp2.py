@@ -9,11 +9,14 @@ Creating descriptive plots for behavior of EASTO experiment
 """
 #%% Import packages
 import os
+from os.path import join
 import sys
 RootDir = '/isilon/LFMI/VMdrive/YuanHao/EASTO-Behavior'
-AnalysisDir = os.path.join(RootDir, 'Analysis')
-DataDir = os.path.join(RootDir, 'Data')
-sys.path.append(AnalysisDir + '/EASTO_funcs/')
+AnalysisDir = join(RootDir, 'Analysis')
+DataDir = join(RootDir, 'Data')
+FigDir = join(RootDir, 'Figures')
+
+sys.path.append(join(AnalysisDir, 'EASTO_funcs'))
 
 import seaborn as sns
 import pandas as pd 
@@ -33,7 +36,7 @@ os.chdir(DataDir)
 paradigm = 'Spatial'
 expt_version = 'Paradigm_Control'
 sub_version = ''
-fname = paradigm + expt_version + sub_version+ '_bhv_df.pkl'
+fname = f"{paradigm}{expt_version}{sub_version}_bhv_df.pkl"
 bhv_df = pd.read_pickle(fname)
 
 plt.rcParams["axes.labelweight"] = "normal"
@@ -41,8 +44,8 @@ plt.rcParams["font.weight"]="normal"
 plt.rcParams["axes.labelsize"]=7
 plt.rcParams["ytick.labelsize"]=7
 plt.rcParams["xtick.labelsize"]=7
-FigDir = '/isilon/LFMI/VMdrive/YuanHao/EASTO-Behavior/Figures/'
 
+# functions for generating SEM and CI
 def sem(data):
     return np.std(data, ddof = 1) / np.sqrt(len(data))
 
@@ -163,13 +166,14 @@ if no_neutral:
     if mainEffect == 'exp':
         cond_names = 'expectation_condition'
         odr_scheme = ['Expect Scrambled', 'Expect Real']
-        x_ticks = ['Unexpected', 'Expected']
-        color='purple'
+        x_ticks = ['Expect scr', 'Expect real']
+        color= ['purple', 'green']
     elif mainEffect == 'att':
         cond_names = "attention_condition"
         odr_scheme = ['Unattended', 'Attended']
         x_ticks = ['Unattended', 'Attended']
-        color='green'
+        palette = sns.color_palette()
+        color = palette[1], palette[0]
 #%% PLOT HR, FAR, d', and c COLAPPSED ACROSS CONDITIONS AND COMPUTE GROUP STATISTICS
 
 fig, axes = plt.subplots(1,4,figsize = (6,2))        
@@ -183,38 +187,46 @@ for i, bhv in enumerate(["Hit", "FA", "d", "c"]):
     
     print(bhv_vars_df.groupby(cond_names)[bhv].apply(CI)) 
     
-    
-#     sns.pointplot(x= cond_names, y= bhv, data = bhv_vars_df,
-#                 errorbar = ('ci', 95),
-#                 order = odr_scheme, color = color, linewidth=1,
-#                 ax = axes[i], markersize = 5, zorder = 2)
-#     #Plot individual subject data
-#     sns.stripplot(x = cond_names, y = bhv, data = bhv_vars_df,
-#                              #hue='attention_condition', order=['Expect Scrambled', 'Expect Real'],
-#                              color = color, alpha = 0.3,
-#                              ax = axes[i], size=3, zorder =1)
+    # Plot mean and CI
+    sns.pointplot(x=cond_names, y=bhv, data=bhv_vars_df,
+                  errorbar=('ci', 95), palette=color,
+                  order=odr_scheme, linewidth=1,
+                  ax=axes[i], markersize=4, zorder=2)
 
-#     if bhv == "Hit" or bhv =="FA":
-#          axes[i].set_yticks(np.arange(0, 1.2, 0.2))
-#          axes[i].axhline(y=0.5, linestyle='--', color = 'black', linewidth = 1)
-#     #elif bhv == "d":
-#         #axes[i].set_yticks(np.arange(0, 3, 0.5))
-#         #axes[i].spines['left'].set_bounds(0, 2.5)
-#     #elif bhv =="c":
-#         #axes[i].set_yticks(np.arange(-0.6, 0.6, 0.2))
-#         #axes[i].spines['left'].set_bounds(-0.6, 0.4)    
-#     #     axes[i].yaxis.set_major_locator(MultipleLocator(0.2))
-#     axes[i].spines['top'].set_visible(False)
-#     axes[i].spines['right'].set_visible(False)
-#     axes[i].spines['left'].set_position(('outward',5))
-#     axes[i].spines['bottom'].set_position(('outward', 5))
-#     axes[i].legend("").remove()
-#     axes[i].set_xlabel("")
-#     axes[i].set_xticklabels(x_ticks, fontsize=7, rotation = 30)      
-# plt.tight_layout()
-# plt.savefig(FigDir + 'Exp2_' + mainEffect + '_SDT.svg', 
-#                 dpi=300, bbox_inches='tight')
-# plt.show()
+    # Connect the two means with a gray line
+    #means = bhv_vars_df.groupby(cond_names)[bhv].mean().reindex(odr_scheme)
+    #axes[i].plot([0, 1], means.values, color='gray', linewidth=1, zorder=0)
+    #Plot individual subject data
+    sns.stripplot(x = cond_names, y = bhv, data = bhv_vars_df,
+                order = odr_scheme, dodge=True,
+                palette = color, alpha = 0.3,
+                ax = axes[i], size=3, zorder =1)
+
+    if bhv == "Hit":
+        axes[i].set_ylabel('HR')
+        axes[i].set_yticks(np.arange(0, 1.2, 0.2))
+        axes[i].axhline(y=0.5, linestyle='--', color = 'black', linewidth = 1)
+    elif bhv == 'FA':
+        axes[i].set_yticks(np.arange(0, 1.2, 0.2))
+    elif bhv == "d":
+        axes[i].set_ylabel("d'")
+        #axes[i].set_yticks(np.arange(0, 3, 0.5))
+        #axes[i].spines['left'].set_bounds(0, 2.5)
+    #elif bhv =="c":
+        #axes[i].set_yticks(np.arange(-0.6, 0.6, 0.2))
+        #axes[i].spines['left'].set_bounds(-0.6, 0.4)    
+    #     axes[i].yaxis.set_major_locator(MultipleLocator(0.2))
+    axes[i].spines['top'].set_visible(False)
+    axes[i].spines['right'].set_visible(False)
+    axes[i].spines['left'].set_position(('outward',5))
+    axes[i].spines['bottom'].set_position(('outward', 5))
+    axes[i].legend("").remove()
+    axes[i].set_xlabel("")
+    axes[i].set_xticklabels(x_ticks, fontsize=7, rotation = 30)      
+plt.tight_layout()
+plt.savefig(join(FigDir, f"Exp2_{mainEffect}_SDT.svg"), 
+                dpi=300, bbox_inches='tight')
+plt.show()
 
 # Paired t-tests on HR, FAR, d, c between conditions
 cond1 = bhv_vars_df[bhv_vars_df[cond_names]==bhv_vars_df[cond_names][0]]
@@ -351,39 +363,42 @@ fig, axes = plt.subplots(1,4,figsize = (6,2), sharey=True)
 
 for rec_status in sorted(df.recognition.unique()):
     for probe_id in sorted(df.probeReal.unique()):
+        print(f"{rec_status}, {probe_id}")
         titles = {0: "Hit trials", 1: "FA Trials",
                       2: "Miss trials", 3: "CR Trials"}
         data = df.loc[(df.probeReal == probe_id) &
                             (df.recognition == rec_status)]
+       
+        sns.pointplot(data = data, x = cond_names, y = data.columns[-1],
+                    order=odr_scheme, linewidth = 1, markersize=5, palette = color, 
+                    errorbar= ('ci', 95), dodge=True, zorder=2,
+                    ax = axes[counter])
         
-#         sns.pointplot(data = data, x = cond_names, y = data.columns[-1],
-#                     order=odr_scheme, linewidth = 1, markersize=5,
-#                     errorbar= ('ci', 95), dodge=True, color=color, zorder=2,
-#                     ax = axes[counter])
-#         sns.swarmplot(data = data, x = cond_names, y = data.columns[-1],
-#                     alpha = 0.3, size=3, ax = axes[counter], color=color, zorder=1)
+        sns.swarmplot(data = data, x = cond_names, y = data.columns[-1],
+                      palette = color, order=odr_scheme, alpha = 0.3, size=3, dodge=True,
+                      ax = axes[counter], zorder=1)
         
-#         if bhv_var == 'correct':
-#             axes[counter].set_yticks(np.arange(0, 1.25, 0.25))
-#             axes[counter].axhline(y=0.25, linestyle='--', color = 'black', linewidth = 1)
-#             axes[counter].yaxis.set_major_locator(MultipleLocator(0.2))
-#         elif bhv_var == 'confidence':
-#             axes[counter].set_yticks(np.arange(1, 4.5, 0.5))
-#             axes[counter].yaxis.set_major_locator(MultipleLocator(0.5))
-#         axes[counter].spines['top'].set_visible(False)
-#         axes[counter].spines['right'].set_visible(False)
-#         axes[counter].spines['left'].set_position(('outward',5))
-#         axes[counter].spines['bottom'].set_position(('outward', 5))
-#         axes[counter].set_xlabel("")
-#         axes[counter].set_ylabel("Categorization Accuracy")
-#         if counter in titles:
-#                 axes[counter].set_title(titles[counter], fontsize=7, fontweight="bold")
-#         axes[counter].set_xticklabels(x_ticks, fontsize=7, rotation = 30)                 
-#         counter += 1    
-# plt.tight_layout()
-# plt.savefig(FigDir + 'Exp2_' + mainEffect + '_categorization.svg', 
-#                 dpi=300, bbox_inches='tight')
-# plt.show()                   
+        if bhv_var == 'correct':
+            axes[counter].set_yticks(np.arange(0, 1.25, 0.25))
+            axes[counter].axhline(y=0.25, linestyle='--', color = 'black', linewidth = 1)
+            axes[counter].yaxis.set_major_locator(MultipleLocator(0.2))
+        elif bhv_var == 'confidence':
+            axes[counter].set_yticks(np.arange(1, 4.5, 0.5))
+            axes[counter].yaxis.set_major_locator(MultipleLocator(0.5))
+        axes[counter].spines['top'].set_visible(False)
+        axes[counter].spines['right'].set_visible(False)
+        axes[counter].spines['left'].set_position(('outward',5))
+        axes[counter].spines['bottom'].set_position(('outward', 5))
+        axes[counter].set_xlabel("")
+        axes[counter].set_ylabel("Categorization Accuracy")
+        if counter in titles:
+                axes[counter].set_title(titles[counter], fontsize=7, fontweight="bold")
+        axes[counter].set_xticklabels(x_ticks, fontsize=7, rotation = 30)                 
+        counter += 1    
+plt.tight_layout()
+plt.savefig(join(FigDir, f"Exp2_{mainEffect}_categorization.svg"), 
+                 dpi=300, bbox_inches='tight')
+plt.show()                   
     
 #cor_comb.savefig(f'{paradigm}_correct.svg'.format(paradigm))
 #%% Category Discrimination (Based on Not-Probed Image Category) NOT REPLICATED need 
