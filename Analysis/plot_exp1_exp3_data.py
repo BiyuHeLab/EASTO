@@ -4,8 +4,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import warnings
+warnings.filterwarnings("ignore")
 
-#plt.rcParams["font.weight"] = "bold"
 plt.rcParams["axes.labelweight"] = "normal"
 plt.rcParams["font.weight"]="normal"
 plt.rcParams["axes.labelsize"]=7
@@ -39,10 +40,8 @@ def plot_SDT_measures_by_conditions(data):
             axes[i].set_ylabel("FA")
         elif bhv == "d":
             axes[i].set_ylabel("d'")
-            #axes[i].set_yticks([])  # Remove y-ticks for better visualization
         elif bhv == "c":
             axes[i].set_ylabel("c")
-            #axes[i].set_yticks([])  # Remove y-ticks for better visualization
         else:
             pass
        
@@ -53,11 +52,10 @@ def plot_SDT_measures_by_conditions(data):
         axes[i].set_xticklabels(["Expect scr", "Expect real"], 
                                        rotation = 45)
         axes[i].set_xlabel("")
-        #axes[i].set_yticklabels(fontsize = 7)
          # Hide legend for subplots
         axes[i].get_legend().remove()
     plt.tight_layout()
-    #plt.show()
+    plt.show()
     
 def plot_bhv_by_conditions(data):
     '''
@@ -105,7 +103,7 @@ def plot_bhv_by_conditions(data):
                                        rotation = 20)
             counter +=1    
     plt.tight_layout()
-    #plt.show()
+    plt.show()
 
 def plot_bhv_by_conditions_split(data):
     '''
@@ -120,7 +118,6 @@ def plot_bhv_by_conditions_split(data):
             
             data = df[(df['not_probe_real'] == not_probe_id) & (df['probeReal'] == probe_id)]
             
-            #counter=divmod(counter,2)
             sns.stripplot(data = data, x = 'expectation_condition', y = data.columns[-1],
                             hue='attention_condition', order=['Expect Scrambled', 'Expect Real'],
                             alpha = 0.3, size=3, dodge=True, ax = axes[counter], zorder =1)
@@ -159,22 +156,22 @@ def plot_bhv_by_conditions_split(data):
                                        rotation = 20)
             counter +=1    
     plt.tight_layout()
-    #plt.show()
+    plt.show()
 
 # %%
 RootDir = "/isilon/LFMI/VMdrive/YuanHao/EASTO-Behavior" 
 DataDir = os.path.join(RootDir, "Data")
-exp_name = 'Exp1_'
+exp_name = 'Exp3_non-neutral_'
 
 df = pd.read_pickle(os.path.join(DataDir, exp_name + "SDT.pkl"))
 plot_SDT_measures_by_conditions(df)   
-plt.savefig(FigDir + exp_name + "SDT.svg", dpi=300, bbox_inches='tight')
+#plt.savefig(FigDir + exp_name + "SDT.svg", dpi=300, bbox_inches='tight')
 
-bhv_vars = ["Confidence"]
+bhv_vars = ["Categorization"]
 for i in bhv_vars:
     df = pd.read_pickle(os.path.join(DataDir, exp_name + i + ".pkl")) 
     plot_bhv_by_conditions(df)
-    plt.savefig(FigDir + exp_name + i + '.svg', dpi=300, bbox_inches='tight')
+    #plt.savefig(FigDir + exp_name + i + '.svg', dpi=300, bbox_inches='tight')
 
 bhv_vars = ["Recognition", "Non-Target_Categorization"]
 for i in bhv_vars:
@@ -183,5 +180,5 @@ for i in bhv_vars:
     df.loc[df['not_probe_real'].str.contains('Real Non-Target', na=False), 'not_probe_real'] = 'Real Nontarget'
     
     plot_bhv_by_conditions_split(df)
-    plt.savefig(FigDir + exp_name + i + '_by_NonTarget.svg', 
-               dpi=300, bbox_inches='tight')
+    # plt.savefig(FigDir + exp_name + i + '_by_NonTarget.svg', 
+    #            dpi=300, bbox_inches='tight')
