@@ -4,6 +4,10 @@ Prior expectation powerfully shapes perception, yet its effects have been notori
 
 Keywords: Conscious perception; visual recognition; spatial attention; expectation; signal detection theory
 
+Analysis was originally performed on a machine running RedHat Linux v9.6 and Python 3.12 
+
+
+
 ## Analysis
 Code for reproducing stats and figures displayed in the paper
 ## Data
