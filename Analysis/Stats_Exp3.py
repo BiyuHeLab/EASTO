@@ -8,7 +8,7 @@
 @Contact :      yuanhao.wu@nyulangone.org, bc1693@nyu.edu
 @License :      None
 @Desc    :      None
-@Last Update:   12/28/2024
+@Last Update:   07/30/2025
 '''
 # %%
 #import pylab
@@ -24,15 +24,11 @@ import seaborn as sns
 import pandas as pd 
 import matplotlib.pyplot as plt 
 import numpy as np 
-from scipy import stats
 from scipy.stats import t
 import pingouin as pg
 import EASTO_funcs.EASTO_funcs as ea
-import itertools 
-import scipy
 import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore")
 
 def CI(data, confidence_level = 0.95):
 # Calculate sample mean and standard error
@@ -162,38 +158,6 @@ for i in ['Hit', 'FA', 'd', 'c']:
                     detailed = True, effsize = "np2"))
 
 #bhv_vars_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_SDT.pkl"))
-#%% Recognition rate by non-probed stimulus identity 
-# group_choice = ['not_probe_real', 'probeReal', 'subject', exp_type, 'attention_condition']
-# proportion_R = bhv_df.groupby(group_choice)['recognition'].mean()
-
-# rec_df = proportion_R.reset_index()
-# #Renaming variables for titles 
-# rec_df.loc[rec_df.not_probe_real == 0,'not_probe_real'] = '(Not-Probed) Scrambled'
-# rec_df.loc[rec_df.not_probe_real == 1,'not_probe_real'] = '(Not-Probed) Real'
-
-# rec_df.loc[rec_df.probeReal == 0,'probeReal'] = '(Probed) Scrambled'
-# rec_df.loc[rec_df.probeReal == 1,'probeReal'] = '(Probed) Real'
-
-# for not_probe_id in rec_df.not_probe_real.unique():
-#     for probe_id in rec_df.probeReal.unique():
-#         print(f'Stats for {not_probe_id} | {probe_id}')
-#         dataDF = rec_df.loc[(rec_df.probeReal == probe_id) &
-#                             (rec_df.not_probe_real == not_probe_id)]
-        
-#         print(pg.rm_anova(dv = 'recognition', 
-#             within = ['attention_condition', 'expectation_condition'],
-#             subject = 'subject',
-#             data = dataDF,
-#             detailed = True,
-#             effsize = "np2"))
-        
-#         for cond in cond_combo:
-#             print(f'Stats for {cond}')
-#             exp = cond[0]
-#             att = cond[1]
-#             correctSlice = dataDF.loc[(dataDF.expectation_condition == exp) & (dataDF.attention_condition == att)].recognition
-#            #print(pg.wilcoxon(correctSlice, np.repeat(0.25, len(correctSlice)), 'greater'))
-#rec_df.to_pickle(os.path.join(DataDir, "Recognition_2x2conds_by_NoProbe.pkl"))
 
 
 #%% Category Discrimination
@@ -264,53 +228,7 @@ for rec_status in sorted(accuracy_df.recognition.unique()):
             data = dataDF,
             detailed = True,
             effsize = "np2"))
-        # For checking whether within each condition if performance is greater than chance
-        # for cond in cond_combo:
-        #     print(f'Stats for {cond}')
-        #     exp = cond[0]
-        #     att = cond[1]
-        #     correctSlice = dataDF.loc[(dataDF.expectation_condition == exp) & (dataDF.attention_condition == att)].correct
-        #     print(pg.wilcoxon(correctSlice, np.repeat(0.25, len(correctSlice)), 'greater'))
-   
 #accuracy_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Categorization.pkl"))
-#%% Categorization accuracy split by Probed & non Probed 
-# group_choice =  ['not_probe_real', 'probeReal', 'recognition', 'subject', exp_type, 'attention_condition']
-# correct_pd_group = bhv_df.groupby(group_choice)['correct'].mean()
-
-# accuracy_df = correct_pd_group.reset_index()
-    
-#Rename Variables for Titles
-# accuracy_df.loc[accuracy_df.recognition == 0,'recognition'] = 'Unrecognized'
-# accuracy_df.loc[accuracy_df.recognition == 1,'recognition'] = 'Recognized'
-
-# accuracy_df.loc[accuracy_df.not_probe_real == 0,'not_probe_real'] = '(Not-Probed) Scrambled'
-# accuracy_df.loc[accuracy_df.not_probe_real == 1,'not_probe_real'] = '(Not-Probed) Real'
-
-# accuracy_df.loc[accuracy_df.probeReal == 0,'probeReal'] = '(Probed) Scrambled'
-# accuracy_df.loc[accuracy_df.probeReal == 1,'probeReal'] = '(Probed) Real'
-
-# recognition_status = 'Recognized'
-# rec_accuracy_df = accuracy_df.loc[accuracy_df.recognition == recognition_status]
-
-# for not_probe_id in rec_accuracy_df.not_probe_real.unique():
-#     for probe_id in rec_accuracy_df.probeReal.unique():
-#         print("")
-#         print("**************************************")
-#         print(f'Stats for {not_probe_id} | {probe_id}')
-#         print("**************************************")
-        
-#         dataDF = rec_accuracy_df.loc[(rec_accuracy_df.probeReal == probe_id) &
-#                             (rec_accuracy_df.not_probe_real == not_probe_id)]
-        
-#         print(dataDF.groupby(["expectation_condition", "attention_condition"])['correct'].mean())
-        
-#         print(pg.rm_anova(dv = 'correct', 
-#             within = ['attention_condition', 'expectation_condition'],
-#             subject = 'subject',
-#             data = dataDF,
-#             detailed = True,
-#             effsize = "np2"))
-#rec_accuracy_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Categorization_split.pkl"))
 #%% Confidence
 print("")
 print("***********************************************************************")
@@ -348,42 +266,6 @@ for rec_status in sorted(conf_df.recognition.unique()):
             detailed = True, effsize = "np2"))
 
 conf_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Confidence.pkl"))
-#%% Confidence Split by probed and not probed
-# group_choice =  ['not_probe_real', 'probeReal', 'recognition', 'subject', exp_type, 'attention_condition']
-# conf_df = bhv_df.groupby(group_choice)['confidence'].mean()
-
-# conf_df = conf_df.reset_index()
-    
-# #Rename Variables for Titles
-# conf_df.loc[conf_df.recognition == 0,'recognition'] = 'Unrecognized'
-# conf_df.loc[conf_df.recognition == 1,'recognition'] = 'Recognized'
-
-# conf_df.loc[conf_df.not_probe_real == 0,'not_probe_real'] = '(Not-Probed) Scrambled'
-# conf_df.loc[conf_df.not_probe_real == 1,'not_probe_real'] = '(Not-Probed) Real'
-
-# conf_df.loc[conf_df.probeReal == 0,'probeReal'] = '(Probed) Scrambled'
-# conf_df.loc[conf_df.probeReal == 1,'probeReal'] = '(Probed) Real'
-
-# recognition_status = 'Recognized'
-# rec_conf_df = conf_df.loc[conf_df.recognition == recognition_status]
-
-# for not_probe_id in rec_conf_df.not_probe_real.unique():
-#     for probe_id in rec_conf_df.probeReal.unique():
-#         print("")
-#         print('**************************************')
-#         print(f'Stats for {not_probe_id} | {probe_id}')
-#         print('**************************************')
-#         dataDF = rec_conf_df.loc[(rec_conf_df.probeReal == probe_id) &
-#                             (rec_conf_df.not_probe_real == not_probe_id)]
-#         dataDF.groupby(['expectation_condition', 'attention_condition'])['confidence'].mean()
-        
-#         print(pg.rm_anova(dv = 'confidence', 
-#             within = ['attention_condition', 'expectation_condition'],
-#             subject = 'subject',
-#             data = dataDF, detailed = True, effsize = "np2"))       
-# rec_conf_df.to_pickle(os.path.join(DataDir, "Exp3+" + tag + "_Confidence_split.pkl"))
-
-# %%
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # RECOGNITION RATE BY NON-TARGET STIMULUS IDENTITY
 ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -476,14 +358,6 @@ for probe_id in sorted(rec_df.probeReal.unique()):
 
 # print(pg.ttest(RR_attended,RS_attended, paired = True, alternative='two-sided'))
 
-
-        
-        # for cond in cond_combo:
-        #     print(f'Stats for {cond}')
-        #     exp = cond[0]
-        #     att = cond[1]
-        #     correctSlice = dataDF.loc[(dataDF.expectation_condition == exp) & (dataDF.attention_condition == att)].recognition
-        #     print(pg.wilcoxon(correctSlice, np.repeat(0.25, len(correctSlice)), 'greater'))
 rec_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Recognition_by_NonTarget.pkl"))
 
 
@@ -525,9 +399,6 @@ for probe_id in sorted(rec_accuracy_df.probeReal.unique()):
         dataDF = rec_accuracy_df.loc[(rec_accuracy_df.probeReal == probe_id) &
                             (rec_accuracy_df.not_probe_real == not_probe_id)]
         
-        # print(dataDF.groupby(["expectation_condition", "attention_condition"])['notProbeCorrect'].mean())
-        # print(dataDF.groupby(["expectation_condition", "attention_condition"])['notProbeCorrect'].apply(CI))
-        
         attended = dataDF[dataDF['attention_condition']=="Attended"]
         attended = attended.groupby('subject')['notProbeCorrect'].mean()
         unattended = dataDF[dataDF['attention_condition']=="Unattended"]
@@ -548,20 +419,7 @@ for probe_id in sorted(rec_accuracy_df.probeReal.unique()):
         print(f"CI: {CI(unattended)}")
         print(pg.ttest(unattended-0.25,0, paired = True, alternative='two-sided')) 
         print('******************************************')
-        
-        
-        
-        # print('Expect Real ')
-        # print(f"MEAN: {np.mean(expected)}")
-        # print(f"CI: {CI(expected)}")
-        # print(pg.ttest(expected-0.25,0, paired = True, alternative='two-sided'))
-        # print('******************************************')
-        # print('Expect Scrambled') 
-        # print(f"MEAN: {np.mean(unexpected)}")
-        # print(f"CI: {CI(unexpected)}")
-        # print(pg.ttest(unexpected-0.25,0, paired = True, alternative='two-sided'))
-        # print('******************************************') 
-        
+                
         print(pg.rm_anova(dv = 'notProbeCorrect', 
             within = ['attention_condition', 'expectation_condition'],
             subject = 'subject',
