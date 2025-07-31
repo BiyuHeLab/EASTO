@@ -60,24 +60,6 @@ elif mainEffect == 'attention':
     
     
 #%% PLOT HR, FAR, d', and c COLAPPSED ACROSS CONDITIONS AND COMPUTE GROUP STATISTICS   
-for i, bhv in enumerate(["Hit", "FA", "d", "c"]):
-    
-    cond1 = bhv_vars_df[bhv_vars_df[cond_names]==bhv_vars_df[cond_names][0]].reset_index()
-    cond2 = bhv_vars_df[bhv_vars_df[cond_names]==bhv_vars_df[cond_names][1]].reset_index()
-    print("")
-    print("*********************") 
-    print(f"{bhv}")
-    print("*********************")
-    print("MEAN ± 95% CI:")
-    print(f"{cond1[cond_names][0]}: \
-        {round(cond1[bhv].mean(),2)} ± {round(CI(cond1[bhv]),2)}")
-    print(f"{cond2[cond_names][0]}: \
-        {round(cond2[bhv].mean(),2)} ± {round(CI(cond2[bhv]),2)}")
-    print("")
-    print("Pair-wise t-test:")
-    print(pg.ttest(cond1[bhv],cond2[bhv], paired = True, alternative='two-sided'))
-
- 
 fig, axes = plt.subplots(1,4,figsize = (6,2))        
 for i, bhv in enumerate(["Hit", "FA", "d", "c"]):   
     # Plot mean and CI
@@ -111,36 +93,12 @@ for i, bhv in enumerate(["Hit", "FA", "d", "c"]):
 plt.tight_layout()
 plt.show()
 
-
-
 #%% ################################################################ 
 # Category Discrimination
 # ################################################################## 
-group_choice = ['recognition', 'probeReal','subject', cond_names]
 df = pd.read_pickle(os.path.join(DataDir, f"Exp2_{mainEffect}_categorization.pkl"))
 
-for rec_status in sorted(df.recognition.unique()):
-    for probe_id in sorted(df.probeReal.unique()):
-        data = df.loc[(df.probeReal == probe_id) &
-                            (df.recognition == rec_status)]
-        cond1 = data[data[cond_names]==np.unique(data[cond_names])[0]].reset_index()
-        cond2 = data[data[cond_names]==np.unique(data[cond_names])[1]].reset_index()
-        print("")
-        print("**************************************")
-        print(f'Stats for {rec_status} | {probe_id}')
-        print("**************************************")
-       
-        print("MEAN ± 95% CI:")
-        print(f"{cond1[cond_names][0]}: \
-        {round(cond1['correct'].mean(),2)} ± {round(CI(cond1['correct']),2)}")
-        print(f"{cond2[cond_names][0]}: \
-        {round(cond2['correct'].mean(),2)} ± {round(CI(cond2['correct']),2)}")
-        print("")
-        print("Pair-wise t-test:")      
-        print(pg.ttest(cond1['correct'], cond2['correct'],
-                alternative = "two-sided", paired=True))
-        
-# %% Plot categorization accuracy by SDT metrics (Fig 5 A-ii and B-ii)
+# Plot categorization accuracy by SDT metrics (Fig 5 A-ii and B-ii)
 counter = 0
 fig, axes = plt.subplots(1,4,figsize = (6,2), sharey=True)
 
