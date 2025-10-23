@@ -90,7 +90,7 @@ def get_gaze_positions(subj_df_sorted, condition, dfMsg, dfSamples, dominant_eye
     for idx in range(len(cond_df)):
         #Select the relevant samples to check for fixation 
         samples = dfSamples.loc[dfSamples.tSample.between(checkFixationPeriod.onset[idx], checkFixationPeriod.offset[idx])]
-        samples.reset_index   #(drop=True, inplace=True)
+        #samples.reset_index   #(drop=True, inplace=True)
         X_SamplesFix = samples[x_pos].between(x_center - pixBuffer, x_center + pixBuffer)
         Y_SamplesFix = samples[y_pos].between(y_center - pixBuffer, y_center + pixBuffer)
 
