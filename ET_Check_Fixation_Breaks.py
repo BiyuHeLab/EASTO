@@ -70,7 +70,10 @@ def get_gaze_positions(subj_df_sorted, condition, dfMsg, dfSamples, dominant_eye
     #if exp_version == 'Paradigm_Control':
     #block_types = ['attention', 'expectation']
     #for block in block_types: 
-    cond_mask = subj_df_sorted[f'{condition}_condition']!='Neutral'
+    if condition == 'LE':
+        cond_mask = subj_df_sorted['exp_color']!='Neutral'
+    elif condition =='GE':
+        cond_mask = subj_df_sorted['exp_color']=='Neutral'
     cond_df = subj_df_sorted[cond_mask].reset_index()
 
     if dominant_eye =='R':
@@ -124,15 +127,13 @@ def get_gaze_positions(subj_df_sorted, condition, dfMsg, dfSamples, dominant_eye
         
         
 DataDir = '/isilon/LFMI/VMdrive/YuanHao/EASTO-Behavior/Data'
-exp_version = 'Paradigm_Control' #['Paradigm_V3', 'Paradigm_Control', 'Paradigm_expControl']
+exp_version = 'Paradigm_expControl' #['Paradigm_V3', 'Paradigm_Control', 'Paradigm_expControl']
 paradigm = 'Spatial'
 sub_version = ''
 bhv_df = pd.read_pickle(join(DataDir, f"{paradigm}{exp_version}_bhv_df.pkl")) 
 
 
-
-
-for subj in  ['P24', 'P25', 'P26', 'P27', 'P28']:
+for subj in  ['P57', 'P58', 'P59', 'P61', 'P62', 'P63']:
     ET_Dir = join(DataDir, exp_version, subj, paradigm, 'Main', 'edfData')
     ET_filename = f"{subj}_eye_tracking_data.pkl"
     subj_df = bhv_df[(bhv_df['subject']==subj)]
@@ -142,7 +143,7 @@ for subj in  ['P24', 'P25', 'P26', 'P27', 'P28']:
     dfRec, dfMsg, dfFix, dfSacc, dfBlink, dfSamples = load_ET_data(ET_Dir, ET_filename)
     dominant_eye = get_dominant_eye(dfFix)
 
-    for condition in ['attention', 'expectation']:
+    for condition in ['GE', 'LE']:
         cond_df = get_gaze_positions(subj_df_sorted, condition, dfMsg, dfSamples, dominant_eye)
 
         # Create the column if it doesn't exist yet
