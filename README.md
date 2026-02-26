@@ -71,5 +71,6 @@ This folder contains processed and source data used to generate all figures repo
 ---
 
 ## Paradigm Code
+contain everything needed to run the behavioral experiments for the Exp_1 (Main), Exp_2 (Control), and Exp_3 (expControl) paradigms.
 - `Spatial`:                   Psychopy Code necessary to run Experiment 1 and 2
 - `Spatial_ExpControl`:        Psychopy code necessary to run Experiment 3
