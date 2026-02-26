@@ -68,5 +68,8 @@ This folder contains processed and source data used to generate all figures repo
 
 - `JASP files`:                                         data stored in .csv formatted for JASP                           
 
-
 ---
+
+## Paradigm Code
+- `Spatial`:                   Psychopy Code necessary to run Experiment 1 and 2
+- `Spatial_ExpControl`:        Psychopy code necessary to run Experiment 3
