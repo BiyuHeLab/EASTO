@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-mainEffect = 'attention'
-#%% Import packages
+mainEffect = 'expectation'
+#%% Set paths and import packages
 import os
 from os.path import join
-#import sys
 RootDir = '/isilon/LFMI/VMdrive/YuanHao/EASTO-Behavior'
 AnalysisDir = join(RootDir, 'Analysis')
 DataDir = join(RootDir, 'Data')
-#FigDir = join(RootDir, 'Figures')
-
-#sys.path.append(join(AnalysisDir, 'EASTO_funcs'))
 
 import seaborn as sns
 import pandas as pd 
@@ -23,14 +19,9 @@ from matplotlib.ticker import MultipleLocator
 import warnings
 warnings.filterwarnings("ignore")
 
-plt.rcParams["axes.labelweight"] = "normal"
-plt.rcParams["font.weight"]="normal"
-plt.rcParams["axes.labelsize"]=7
-plt.rcParams["ytick.labelsize"]=7
-plt.rcParams["xtick.labelsize"]=7
 
-# functions for generating SEM and CI
 
+# functions for computing SEM and CI
 def CI(data, confidence_level = 0.95):
 # Calculate sample mean and standard error
     mean = np.mean(data)
@@ -44,7 +35,11 @@ def CI(data, confidence_level = 0.95):
     return t_critical * sem
 
 # SET FIGURE PARAMETERS
-bhv_vars_df = pd.read_pickle(os.path.join(DataDir, f"Exp2_{mainEffect}_SDT.pkl"))
+plt.rcParams["axes.labelweight"] = "normal"
+plt.rcParams["font.weight"]="normal"
+plt.rcParams["axes.labelsize"]=7
+plt.rcParams["ytick.labelsize"]=7
+plt.rcParams["xtick.labelsize"]=7
 
 if mainEffect == 'expectation':
     cond_names = 'expectation_condition'
@@ -58,7 +53,8 @@ elif mainEffect == 'attention':
     palette = sns.color_palette()
     color = palette[1], palette[0]
     
-    
+# LOAD EXP2 BEHAVIORAL DATA IN DATAFRAME FORMAT
+bhv_vars_df = pd.read_pickle(os.path.join(DataDir, f"Exp2_{mainEffect}_SDT.pkl"))    
 #%% PLOT HR, FAR, d', and c COLAPPSED ACROSS CONDITIONS AND COMPUTE GROUP STATISTICS   
 fig, axes = plt.subplots(1,4,figsize = (6,2))        
 for i, bhv in enumerate(["Hit", "FA", "d", "c"]):   

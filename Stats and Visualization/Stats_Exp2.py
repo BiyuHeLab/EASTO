@@ -3,7 +3,7 @@
 """
 """
 
-mainEffect = 'att' #['exp', 'att', 'None']
+mainEffect = 'exp' #['exp', 'att', 'None']
 #%% Import packages
 import os
 from os.path import join
@@ -52,14 +52,6 @@ elif mainEffect == 'att':
 if no_neutral: 
     cond_combo.remove('Neutral')
 #%% Slice Dataframe 
-
-# Drops trials where fixation was broken in between cue onset -> stim offset
-# bhv_df = bhv_df.loc[bhv_df.brokeFixation == 0]
-
-# # Drop Subjects that have fewer than 100 trials remaining 
-# subTrials = {sub : len(bhv_df.loc[bhv_df.subject == sub]) for sub in bhv_df.subject.unique()}
-# subRemove = [sub for sub, numTrials in subTrials.items() if numTrials <100]
-# bhv_df = bhv_df[~bhv_df.subject.isin(subRemove)]
 
 # Drop trials in which subject did not respond to one of the questions
 bhv_df = bhv_df.dropna(axis = 0, subset = ['recognition'])
@@ -119,17 +111,26 @@ for i, bhv in enumerate(["Hit", "FA", "d", "c"]):
     print(f"{cond2[exp_type][0]}: \
         {round(cond2[bhv].mean(),2)} ± {round(CI(cond2[bhv]),2)}")
     print("")
-    print("Pair-wise t-test:")
-    print(pg.ttest(cond1[bhv],cond2[bhv], paired = True, alternative='two-sided'))
-
-
+    print("Paired tests:")
+    
+    #print(pg.ttest(cond1[bhv],cond2[bhv], paired = True, alternative='two-sided'))
+    t_test = pg.ttest(cond1[bhv],cond2[bhv], paired = True, alternative='two-sided')
+    t_val = t_test['T'].to_numpy()[0]
+    
+    print(pg.wilcoxon(cond1[bhv],cond2[bhv], alternative='two-sided'))
+    print(pg.bayesfactor_ttest(t_val, 6,6, paired=True, r=0.707,
+                                alternative='two-sided'))
+ 
 #%% ################################################################ 
 # Category Discrimination and Confidence
 # ################################################################## 
 group_choice = ['recognition', 'probeReal','subject', exp_type]
+
 df = bhv_df.groupby(group_choice)['correct'].mean()
 df = df.reset_index()
-
+if no_neutral:
+    df = df[df[exp_type] != 'Neutral']
+    df = df.reset_index()
 #Rename Variables for Titles
 df.loc[df.recognition == 0,'recognition'] = 'Unrecognized'
 df.loc[df.recognition == 1,'recognition'] = 'Recognized'
@@ -158,8 +159,13 @@ for rec_status in sorted(df.recognition.unique()):
         print(f"{cond2[exp_type][0]}: \
         {round(cond2['correct'].mean(),2)} ± {round(CI(cond2['correct']),2)}")
         print("")
-        print("Pair-wise t-test:")      
-        print(pg.ttest(cond1['correct'], cond2['correct'],
-                alternative = "two-sided", paired=True))
-        
-# %%
+        #print("Pair-wise t-test:")      
+        #print(pg.ttest(cond1['correct'], cond2['correct'],
+        #        alternative = "two-sided", paired=True))
+        print(pg.wilcoxon(cond1['correct'], cond2['correct'],
+                    alternative = "two-sided",
+                    ))
+        t_test = pg.ttest(cond1['correct'],cond2['correct'], paired = True, alternative='two-sided')
+        t_val = t_test['T'].to_numpy()[0]
+        print(pg.bayesfactor_ttest(t_val, 6,6,
+                               alternative='two-sided'))

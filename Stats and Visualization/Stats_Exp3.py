@@ -47,7 +47,7 @@ os.chdir(DataDir)
 paradigm = 'Spatial'
 expt_version = 'Paradigm_expControl'
 sub_version = ''
-Neutral = True
+Neutral = False
 fname = paradigm + expt_version + sub_version+ '_bhv_df.pkl'
 bhv_df = pd.read_pickle(fname)
 if Neutral:
@@ -77,22 +77,6 @@ bhv_df.loc[bhv_df.base_cat_right != bhv_df.base_cat_left, 'sameCat'] = 0
 cond_combo = pd.MultiIndex.from_product([sorted(bhv_df.expectation_condition.unique()),
                                     sorted(bhv_df.attention_condition.unique())]).tolist()
 #%% Slice DataFrame 
-
-# # Drops trials where fixation was broken in between cue onset -> stim offset
-# bhv_df = bhv_df.loc[bhv_df.brokeFixation == 0]
-
-# # Drop Subjects that have fewer than 100 trials remaining 
-# subTrials = {sub : len(bhv_df.loc[bhv_df.subject == sub]) for sub in bhv_df.subject.unique()}
-# subRemove = [sub for sub, numTrials in subTrials.items() if numTrials <100]
-# bhv_df = bhv_df[~bhv_df.subject.isin(subRemove)]
-
-# # Drop trials in which subject did not respond to the recognition question
-# bhv_df = bhv_df.dropna(axis = 0, subset = ['recognition'])
-# bhv_df = bhv_df.dropna(axis = 0, subset = ['category_response'])
-
-#Exclude subjects 
-# bhv_df = bhv_df.loc[bhv_df.subject != 'P46']
-
 # Create dataframe including each subject's SDT behavioral mesaures, categorization accuracy,
 # RT for expectation and attention conditions
 df_bhv_vars = {sub : {cond : [] for cond in cond_combo} for sub in bhv_df.subject.unique()}
@@ -155,7 +139,7 @@ for i in ['Hit', 'FA', 'd', 'c']:
     print(pg.rm_anova(dv = i, 
                     within = ['attention_condition', 'expectation_condition'],
                     subject = 'subject', data = bhv_vars_df,
-                    detailed = True, effsize = "np2"))
+                    detailed = True, effsize = "np2",))
 
 #bhv_vars_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_SDT.pkl"))
 
@@ -265,7 +249,7 @@ for rec_status in sorted(conf_df.recognition.unique()):
             subject = 'subject', data = dataDF,
             detailed = True, effsize = "np2"))
 
-conf_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Confidence.pkl"))
+#conf_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Confidence.pkl"))
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # RECOGNITION RATE BY NON-TARGET STIMULUS IDENTITY
 ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -294,7 +278,7 @@ for probe_id in sorted(rec_df.probeReal.unique()):
         print("*******************************************")
         dataDF = rec_df.loc[(rec_df.probeReal == probe_id) &
                             (rec_df.not_probe_real == not_probe_id)]
-        
+            
         print(dataDF.groupby(["expectation_condition", "attention_condition"])["recognition"].mean())
         print(dataDF.groupby(["expectation_condition", "attention_condition"])["recognition"].apply(CI))  
         attended = dataDF[dataDF['attention_condition']=="Attended"]
@@ -333,32 +317,35 @@ for probe_id in sorted(rec_df.probeReal.unique()):
             effsize = "np2"))
 
 
-# data_RR = rec_df.loc[(rec_df.probeReal == 'Real Target') &
-#                             (rec_df.not_probe_real == 'Real Non-Target')]
+data_RR = rec_df.loc[(rec_df.probeReal == 'Real Target') &
+                            (rec_df.not_probe_real == 'Real Nontarget')]
 
-# data_RS = rec_df.loc[(rec_df.probeReal == 'Real Target') &
-#                             (rec_df.not_probe_real == 'Scr Non-Target')]
+data_RS = rec_df.loc[(rec_df.probeReal == 'Real Target') &
+                            (rec_df.not_probe_real == 'Scr Nontarget')]
 
-# data_SR = rec_df.loc[(rec_df.probeReal == 'Scr Target') &
-#                             (rec_df.not_probe_real == 'Real Non-Target')]
+data_SR = rec_df.loc[(rec_df.probeReal == 'Scr Target') &
+                            (rec_df.not_probe_real == 'Real Nontarget')]
 
-# data_SS = rec_df.loc[(rec_df.probeReal == 'Scr Target') &
-#                             (rec_df.not_probe_real == 'Scr Non-Target')]
+data_SS = rec_df.loc[(rec_df.probeReal == 'Scr Target') &
+                            (rec_df.not_probe_real == 'Scr Nontarget')]
 
 
-# RR_attended = data_SR[data_SR['attention_condition']=="Unattended"]
-# RR_attended = RR_attended.groupby('subject')['recognition'].mean()
-# print(np.mean(RR_attended))
-# print(CI(RR_attended))
+RR_attended = data_RR[data_RR['attention_condition']=="Unattended"]
+RR_attended = RR_attended.groupby('subject')['recognition'].mean()
+print(np.mean(RR_attended))
+print(CI(RR_attended))
 
-# RS_attended = data_SS[data_SS['attention_condition']=="Unattended"]
-# RS_attended = RS_attended.groupby('subject')['recognition'].mean()
-# print(np.mean(RS_attended))
-# print(CI(RS_attended))
+RS_attended = data_RS[data_RS['attention_condition']=="Unattended"]
+RS_attended = RS_attended.groupby('subject')['recognition'].mean()
+print(np.mean(RS_attended))
+print(CI(RS_attended))
 
-# print(pg.ttest(RR_attended,RS_attended, paired = True, alternative='two-sided'))
-
-rec_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Recognition_by_NonTarget.pkl"))
+print(pg.ttest(RR_attended,RS_attended, paired = True, alternative='two-sided'))
+print(pg.wilcoxon(RR_attended,RS_attended, alternative='two-sided'))
+t_results = pg.ttest(RR_attended,RS_attended, paired = True, alternative='two-sided')
+t_val = t_results['T'].values[0]
+print(pg.bayesfactor_ttest(t_val, 6,6,paired = True, alternative = 'two-sided'))
+# rec_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Recognition_by_NonTarget.pkl"))
 
 
 
@@ -412,12 +399,20 @@ for probe_id in sorted(rec_accuracy_df.probeReal.unique()):
         print('ATTENDED ')
         print(f"MEAN: {np.mean(attended)}")
         print(f"CI: {CI(attended)}")
-        print(pg.ttest(attended-0.25,0, paired = True, alternative='two-sided'))
+        print(pg.ttest(attended-0.25,0, paired = False, alternative='two-sided'))
+        print(pg.wilcoxon(attended - 0.25, alternative='two-sided'))
+        t_results = pg.ttest(attended-0.25,0, paired = False, alternative='two-sided')
+        t_val = t_results['T'].values[0]
+        print(pg.bayesfactor_ttest(t_val, 6,6, paired = False, alternative='two-sided'))        
         print('******************************************')
         print('UNATTENDED') 
         print(f"MEAN: {np.mean(unattended)}")
         print(f"CI: {CI(unattended)}")
-        print(pg.ttest(unattended-0.25,0, paired = True, alternative='two-sided')) 
+        print(pg.ttest(unattended-0.25,0, paired = False, alternative='two-sided'))
+        print(pg.wilcoxon(unattended - 0.25, alternative='two-sided'))
+        t_results = pg.ttest(unattended-0.25,0, paired = False, alternative='two-sided')
+        t_val = t_results['T'].values[0]
+        print(pg.bayesfactor_ttest(t_val, 6,6, paired = False, alternative='two-sided'))  
         print('******************************************')
                 
         print(pg.rm_anova(dv = 'notProbeCorrect', 
@@ -426,4 +421,4 @@ for probe_id in sorted(rec_accuracy_df.probeReal.unique()):
             data = dataDF,
             detailed = True,
             effsize = "np2"))
-rec_accuracy_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "_Non-Target_Categorization_by_NonTarget.pkl"))
+#rec_accuracy_df.to_pickle(os.path.join(DataDir, "Exp3_" + tag + "Categorization_by_NonTarget.pkl"))

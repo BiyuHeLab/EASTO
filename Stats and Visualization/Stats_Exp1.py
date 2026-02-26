@@ -15,7 +15,7 @@ The source data are stored in
 - Exp1_Categorization.pkl
 - Exp1_Confidence.pkl
 - Exp1_Recognition_by_NonTarget.pkl
-- Exp1_Non-Target_Categorizartion_by_NonTarget.pkl
+- Exp1_Categorizartion_by_NonTarget.pkl
 '''
 # %%
 import os
@@ -85,22 +85,7 @@ bhv_df.loc[bhv_df.base_cat_right != bhv_df.base_cat_left, 'sameCat'] = 0
 exp_type = 'expectation_condition'
 cond_combo = pd.MultiIndex.from_product([sorted(bhv_df.expectation_condition.unique()),
                                     sorted(bhv_df.attention_condition.unique())]).tolist()
-#%% Slice DataFrame 
 
-# # Drops trials where fixation was broken in between cue onset -> stim offset
-# bhv_df = bhv_df.loc[bhv_df.brokeFixation == 0]
-
-# # Drop Subjects that have fewer than 100 trials remaining 
-# subTrials = {sub : len(bhv_df.loc[bhv_df.subject == sub]) for sub in bhv_df.subject.unique()}
-# subRemove = [sub for sub, numTrials in subTrials.items() if numTrials <100]
-# bhv_df = bhv_df[~bhv_df.subject.isin(subRemove)]
-
-# # Drop trials in which subject did not respond to the recognition question
-# bhv_df = bhv_df.dropna(axis = 0, subset = ['recognition'])
-# bhv_df = bhv_df.dropna(axis = 0, subset = ['category_response'])
-
-#Exclude subjects 
-# bhv_df = bhv_df.loc[bhv_df.subject != 'P46']
 
 # Create dataframe including each subject's SDT behavioral measures, categorization accuracy,
 # RT for expectation and attention conditions
@@ -479,4 +464,4 @@ for probe_id in sorted(rec_accuracy_df.probeReal.unique()):
             detailed = True,
             effsize = "np2"))
            
-#rec_accuracy_df.to_pickle(join(DataDir, "Exp1_Non-Target_Categorization_by_NonTarget.pkl"))
+#rec_accuracy_df.to_pickle(join(DataDir, "Exp1_Categorization_by_NonTarget.pkl"))

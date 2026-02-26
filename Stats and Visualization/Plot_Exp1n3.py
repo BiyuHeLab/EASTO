@@ -1,4 +1,5 @@
-# %%
+# This script generates figures related to results obtained from Exp1/Exp 3 
+# %% Import packages and set figure parameters
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -13,7 +14,7 @@ plt.rcParams["axes.labelsize"]=7
 plt.rcParams["ytick.labelsize"]=7
 plt.rcParams["xtick.labelsize"]=7
 FigDir = '/isilon/LFMI/VMdrive/YuanHao/EASTO-Behavior/Figures/'
-# %%
+# %% 
 def plot_SDT_measures_by_conditions(data):
     ''' 
     This function generates figures displaying SDT behavioral measures
@@ -37,7 +38,7 @@ def plot_SDT_measures_by_conditions(data):
             axes[i].axhline(y=0.5, linestyle='--', color = 'black', linewidth=1)
             axes[i].set_ylabel("HR")
         elif bhv == "FA":
-            axes[i].set_ylabel("FA")
+            axes[i].set_ylabel("FAR")
         elif bhv == "d":
             axes[i].set_ylabel("d'")
         elif bhv == "c":
@@ -55,7 +56,9 @@ def plot_SDT_measures_by_conditions(data):
          # Hide legend for subplots
         axes[i].get_legend().remove()
     plt.tight_layout()
-    plt.show()
+    return fig, axes
+    #plt.show()
+    
     
 def plot_bhv_by_conditions(data):
     '''
@@ -103,7 +106,7 @@ def plot_bhv_by_conditions(data):
                                        rotation = 20)
             counter +=1    
     plt.tight_layout()
-    plt.show()
+    #plt.show()
 
 def plot_bhv_by_conditions_split(data):
     '''
@@ -135,7 +138,7 @@ def plot_bhv_by_conditions_split(data):
                 axes[counter].set_yticks(np.arange(0, 1.25, 0.25))
                 axes[counter].axhline(y=0.5, linestyle='--', color = 'black', linewidth=1)
                 axes[counter].spines['left'].set_bounds(0, 1)
-                axes[counter].set_ylabel("Recognition Rate")
+                axes[counter].set_ylabel("P('yes')")
             elif df.columns[-1] == 'notProbeCorrect':
                 axes[counter].set_yticks(np.arange(0, 1.25, 0.25))
                 axes[counter].axhline(y=0.25, linestyle='--', color = 'black', linewidth=1)
@@ -156,24 +159,29 @@ def plot_bhv_by_conditions_split(data):
                                        rotation = 20)
             counter +=1    
     plt.tight_layout()
-    plt.show()
+    return fig, axes
+    #plt.show()
 
 # %%
 RootDir = "/isilon/LFMI/VMdrive/YuanHao/EASTO-Behavior" 
 DataDir = os.path.join(RootDir, "Data")
-exp_name = 'Exp3_non-neutral_'
+exp_name = 'Exp1_'
 
+#Plot SDT-related measures
 df = pd.read_pickle(os.path.join(DataDir, exp_name + "SDT.pkl"))
-plot_SDT_measures_by_conditions(df)   
-#plt.savefig(FigDir + exp_name + "SDT.svg", dpi=300, bbox_inches='tight')
+fig, axes = plot_SDT_measures_by_conditions(df)   
+plt.savefig(FigDir + exp_name + "SDT.svg", dpi=300, bbox_inches='tight')
+plt.show()
 
-bhv_vars = ["Categorization"]
+#Plot Categrization behavior
+bhv_vars = ["Categorization", "Confidence"]
 for i in bhv_vars:
     df = pd.read_pickle(os.path.join(DataDir, exp_name + i + ".pkl")) 
     plot_bhv_by_conditions(df)
     #plt.savefig(FigDir + exp_name + i + '.svg', dpi=300, bbox_inches='tight')
 
-bhv_vars = ["Recognition", "Non-Target_Categorization"]
+#Plot behavior collapsed across target-nontarget pairing 
+bhv_vars = ["Recognition", "Categorization"]
 for i in bhv_vars:
     df = pd.read_pickle(os.path.join(DataDir, exp_name + i + "_by_NonTarget.pkl"))
     df.loc[df['not_probe_real'].str.contains('Scr Non-Target', na=False), 'not_probe_real'] = 'Scr Nontarget'
