@@ -167,11 +167,12 @@ RootDir = '/isilon/LFMI/VMdrive/YuanHao/EASTO-Behavior'
 DataDir = join(RootDir, 'Data')
 #Load processed data
 paradigm = 'Spatial'
-expt_version = 'Paradigm_expControl'
+expt_version = 'Paradigm_V3'
 sub_version = ''
 #fname = paradigm + expt_version + sub_version+ '_bhv_df.pkl'
 #bhv_df = pd.read_pickle(join(DataDir, fname))
-subjects = ['P57', 'P58', 'P59', 'P61', 'P62', 'P63']
+subjects = ['P20', 'P21', 'P22', 'P30', 'P34', 'P35', 'P36', 'P37', 'P38', 'P39',
+             'P40', 'P41', 'P42', 'P43', 'P44', 'P45', 'P46','P50', 'P52']
 
 for subj in subjects:
     elFilename = glob(join(DataDir, expt_version,

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Oct 22 16:32:59 2021
+Created on Fri Oct 22 16:32:59 2025
 1. Extracts and plots gaze positions between two time points (e.g., between attention cue onset and stimulus offset).
 2. Determines whether fixation was maintained or broken in each trial 
    (criterion: deviation > 2 degrees of visual angle for more than 100 ms consecutively).
@@ -74,6 +74,8 @@ def get_gaze_positions(subj_df_sorted, condition, dfMsg, dfSamples, dominant_eye
         cond_mask = subj_df_sorted['exp_color']!='Neutral'
     elif condition =='GE':
         cond_mask = subj_df_sorted['exp_color']=='Neutral'
+    elif condition == "":
+        cond_mask = np.ones(len(subj_df_sorted), dtype=bool)
     cond_df = subj_df_sorted[cond_mask].reset_index()
 
     if dominant_eye =='R':
@@ -87,7 +89,7 @@ def get_gaze_positions(subj_df_sorted, condition, dfMsg, dfSamples, dominant_eye
     onsetTime = dfMsg.loc[dfMsg.text.str.contains('attention_cue_onset')].reset_index(drop = True).rename(columns = {'time':'onset', 'text' : 'onset_event'})
     offsetTime = dfMsg.loc[dfMsg.text.str.contains('poststim_fix')].reset_index(drop = True).rename(columns = {'time':'offset', 'text' : 'offset_event'})
     checkFixationPeriod = pd.concat([onsetTime, offsetTime], axis = 1)
-    checkFixationPeriod = checkFixationPeriod[cond_mask.to_numpy()].reset_index()
+    checkFixationPeriod = checkFixationPeriod[cond_mask].reset_index()
 
     plt.figure(figsize=(9, 6))
     for idx in range(len(cond_df)):
@@ -127,13 +129,14 @@ def get_gaze_positions(subj_df_sorted, condition, dfMsg, dfSamples, dominant_eye
         
         
 DataDir = '/isilon/LFMI/VMdrive/YuanHao/EASTO-Behavior/Data'
-exp_version = 'Paradigm_expControl' #['Paradigm_V3', 'Paradigm_Control', 'Paradigm_expControl']
+exp_version = 'Paradigm_V3' #['Paradigm_V3', 'Paradigm_Control', 'Paradigm_expControl']
 paradigm = 'Spatial'
 sub_version = ''
 bhv_df = pd.read_pickle(join(DataDir, f"{paradigm}{exp_version}_bhv_df.pkl")) 
 
 
-for subj in  ['P57', 'P58', 'P59', 'P61', 'P62', 'P63']:
+for subj in ['P20', 'P21', 'P22', 'P30', 'P34', 'P35', 'P36', 'P37', 'P38', 'P39',
+             'P40', 'P41', 'P42', 'P43', 'P44', 'P45', 'P46','P50', 'P52']:
     ET_Dir = join(DataDir, exp_version, subj, paradigm, 'Main', 'edfData')
     ET_filename = f"{subj}_eye_tracking_data.pkl"
     subj_df = bhv_df[(bhv_df['subject']==subj)]
@@ -143,15 +146,15 @@ for subj in  ['P57', 'P58', 'P59', 'P61', 'P62', 'P63']:
     dfRec, dfMsg, dfFix, dfSacc, dfBlink, dfSamples = load_ET_data(ET_Dir, ET_filename)
     dominant_eye = get_dominant_eye(dfFix)
 
-    for condition in ['GE', 'LE']:
-        cond_df = get_gaze_positions(subj_df_sorted, condition, dfMsg, dfSamples, dominant_eye)
+    #for condition in ['GE', 'LE']:
+    cond_df = get_gaze_positions(subj_df_sorted, "", dfMsg, dfSamples, dominant_eye)
 
-        # Create the column if it doesn't exist yet
-        if 'brokeFixation' not in bhv_df.columns:
-            bhv_df['brokeFixation'] = np.nan  # or False if it's a boolean column
+    # Create the column if it doesn't exist yet
+    if 'brokeFixation' not in bhv_df.columns:
+        bhv_df['brokeFixation'] = np.nan  # or False if it's a boolean column
 
-        # Update only the relevant rows
-        bhv_df.loc[cond_df['index'], 'brokeFixation'] = cond_df['brokeFixation'].values
+    # Update only the relevant rows
+    bhv_df.loc[cond_df['index'], 'brokeFixation'] = cond_df['brokeFixation'].values
 
 bhv_df.to_pickle(join(DataDir, f"{paradigm}{exp_version}_bhv_df.pkl"))
              
