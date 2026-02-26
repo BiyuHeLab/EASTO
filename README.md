@@ -24,7 +24,8 @@ Analyses were originally performed on a machine running **RedHat Linux v9.6** an
 - `ET_PupilSize.py`:            Visualizagion of pipul diameter changes in Experiment 3
 
 ### Others:
-- `GeneratStimuli`:                 Generate stimuli 
+- `GeneratStimuli`:                 Generate stimuli
+- `Quest_Estimate.py`:              Obtain threshold estimate for each stimulus exemplar 
 -  `EASTO_funcs`:                   Helper functions
 - `EngbertMicrosaccadeToolbox`:     Toolbox for oculomotor behavior analysis
 - `edf2asc`:                        edf-asc conversion function
@@ -40,34 +41,32 @@ This folder contains processed and source data used to generate all figures repo
 - `SpatialParadigm_expControl_bhv_df.pkl`:      Exp3
 
 ### Source data: 
-    - `Exp1_SDT.pkl`:                               Source data corresponding to Fig 2A
-    - `Exp1_Categorization.pkl`:                    Source data correspoding to Fig 2B
-    - `Exp1_Confidence.pkl`:                        Source data corresponding to Fig 2C
+- `Exp1_SDT.pkl`:                               Source data corresponding to Fig 2A
+- `Exp1_Categorization.pkl`:                    Source data correspoding to Fig 2B
+- `Exp1_Confidence.pkl`:                        Source data corresponding to Fig 2C
 
-    - `Exp1_Recognition_By_NonTarget.pkl`:          Source data corresponding to Fig 3A              
-    - `Exp1_Categorization_by_NonTarget.pkl`:       Source data corresponding to Fig 3B
+- `Exp1_Recognition_By_NonTarget.pkl`:          Source data corresponding to Fig 3A              
+- `Exp1_Categorization_by_NonTarget.pkl`:       Source data corresponding to Fig 3B
 
-    - `Exp2_attention_SDT.pkl`:                     Source data corresponding to Fig 5A-i
-    - `Exp2_attention_categorization.pkl`:          Source data corresponding to Fig 5A-ii
-    - `Exp2_expectation_SDT.pkl`:                   Source data corresponding to Fig 5B-i
-    - `Exp2_expectation_categorization.pkl`:        Source data corresponding to Fig 5B-ii
+- `Exp2_attention_SDT.pkl`:                     Source data corresponding to Fig 5A-i
+- `Exp2_attention_categorization.pkl`:          Source data corresponding to Fig 5A-ii
+- `Exp2_expectation_SDT.pkl`:                   Source data corresponding to Fig 5B-i
+- `Exp2_expectation_categorization.pkl`:        Source data corresponding to Fig 5B-ii
 
-    - `Exp3_non-neutral_SDT.pkl`:                   Source data corresponding to Fig 7A-i
-    - `Exp3_non-neutral_Categorization.pkl`:        Source data corresponding to Fig 7A-ii     
-    - `Exp3_neutral_SDT.pkl`:                       Source data corresponding to Fig 7B-i
-    - `Exp3_neutral_Categorization.pkl`:            Source data corresponding to Fig 7B-ii
+- `Exp3_non-neutral_SDT.pkl`:                   Source data corresponding to Fig 7A-i
+- `Exp3_non-neutral_Categorization.pkl`:        Source data corresponding to Fig 7A-ii     
+- `Exp3_neutral_SDT.pkl`:                       Source data corresponding to Fig 7B-i
+- `Exp3_neutral_Categorization.pkl`:            Source data corresponding to Fig 7B-ii
 
-    - `Exp3_non-neutral_Recognition_By_NonTarget.pkl`:      Source data corresponding to Fig 8A-i              
-    - `Exp3_non-neutral_Categorization_by_NonTarget.pkl`:   Source data corresponding to Fig 8A-ii
-    - `Exp3_neutral_Recognition_By_NonTarget.pkl`:          Source data corresponding to Fig 8B-i              
-    - `Exp3_neutral_Categorization_by_NonTarget.pkl`:       Source data corresponding to Fig 8B-ii
+- `Exp3_non-neutral_Recognition_By_NonTarget.pkl`:      Source data corresponding to Fig 8A-i              
+- `Exp3_non-neutral_Categorization_by_NonTarget.pkl`:   Source data corresponding to Fig 8A-ii
+- `Exp3_neutral_Recognition_By_NonTarget.pkl`:          Source data corresponding to Fig 8B-i              
+- `Exp3_neutral_Categorization_by_NonTarget.pkl`:       Source data corresponding to Fig 8B-ii
 
-    - `Hit_contingent table.csv`:                           Table S1 in supplementary data 
-    - `FA_contingent table.csv`:                            Table S2 in supplementary data
+- `Hit_contingent table.csv`:                           Table S1 in supplementary data 
+- `FA_contingent table.csv`:                            Table S2 in supplementary data
 
-    - `JASP files`:                                         data stored in .csv formatted for JASP                           
+- `JASP files`:                                         data stored in .csv formatted for JASP                           
 
 
 ---
-
-
