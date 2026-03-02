@@ -33,8 +33,37 @@ Analyses were originally performed on a machine running **RedHat Linux v9.6** an
 ---
 
 ## 📊 Data
+This folder contains all raw, intermediate, and processed datasets required to reproduce the analyses and figures reported in the manuscript.
+Unless otherwise noted, processed datasets are stored in Python pickle (.pkl) format and can be loaded using pandas.read_pickle().
 
-This folder contains processed and source data used to generate all figures reported in the manuscript, all stored in pickle format
+### Raw data
+Raw behavioral and eye-tracking data are stored in subfolders `Paradigm_{version}`.
+
+| Folder                | Experiment | Description                    |
+| --------------------- | ---------- | ------------------------------ |
+| `Paradigm_V3`         | Exp1       | Main spatial paradigm          |
+| `Paradigm_Control`    | Exp2       | Control experiment             |
+| `Paradigm_expControl` | Exp3       | Expectation/control experiment |
+
+Each experiment folder contains one subfolder per participant
+`/Paradigm_{version}/Spatial/{Subj_ID}/` for example `Paradigm_V3/Spatial/P20/`
+
+Each participant folder contains:
+
+`Main/`: contains Psychopy output files from the main experimental task.
+	- Trial logs and behavioral responses
+	- QUEST threshold estimate used during the task
+	
+	`/edfData/`:	Eye-tracking recordings and exports:
+		- .edf — raw EyeLink recordings
+		- .asc — ASCII conversion of EDF
+		- .pkl -  dataframe exports — parsed gaze and event data
+
+`Quest/`: Psychopy output from the QUEST staircase procedure conducted prior to the main task. Used to estimate subject-specific stimulus thresholds.
+
+`Practice/`: Psychopy output from the practice session administered before the main task. Used only for task familiarization; not included in analyses.
+
+
 ### Processed data:
 - `SpatialParadigm_V3_bhv_df.pkl`:              Exp1 
 - `SpatialParadigm_Control_bhv_df.pkl`:         Exp2 
@@ -45,7 +74,7 @@ This folder contains processed and source data used to generate all figures repo
 - `Exp1_Categorization.pkl`:                    Source data correspoding to Fig 2B
 - `Exp1_Confidence.pkl`:                        Source data corresponding to Fig 2C
 
-- `Exp1_Recognition_By_NonTarget.pkl`:          Source data corresponding to Fig 3A              
+- `Exp1_Recognition_By_NonTarget.pkl`:          Source data corresponding to Fig 3A
 - `Exp1_Categorization_by_NonTarget.pkl`:       Source data corresponding to Fig 3B
 
 - `Exp2_attention_SDT.pkl`:                     Source data corresponding to Fig 5A-i
@@ -54,19 +83,19 @@ This folder contains processed and source data used to generate all figures repo
 - `Exp2_expectation_categorization.pkl`:        Source data corresponding to Fig 5B-ii
 
 - `Exp3_non-neutral_SDT.pkl`:                   Source data corresponding to Fig 7A-i
-- `Exp3_non-neutral_Categorization.pkl`:        Source data corresponding to Fig 7A-ii     
+- `Exp3_non-neutral_Categorization.pkl`:        Source data corresponding to Fig 7A-ii
 - `Exp3_neutral_SDT.pkl`:                       Source data corresponding to Fig 7B-i
 - `Exp3_neutral_Categorization.pkl`:            Source data corresponding to Fig 7B-ii
 
-- `Exp3_non-neutral_Recognition_By_NonTarget.pkl`:      Source data corresponding to Fig 8A-i              
+- `Exp3_non-neutral_Recognition_By_NonTarget.pkl`:      Source data corresponding to Fig 8A-i
 - `Exp3_non-neutral_Categorization_by_NonTarget.pkl`:   Source data corresponding to Fig 8A-ii
-- `Exp3_neutral_Recognition_By_NonTarget.pkl`:          Source data corresponding to Fig 8B-i              
+- `Exp3_neutral_Recognition_By_NonTarget.pkl`:          Source data corresponding to Fig 8B-i
 - `Exp3_neutral_Categorization_by_NonTarget.pkl`:       Source data corresponding to Fig 8B-ii
 
 - `Hit_contingent table.csv`:                           Table S1 in supplementary data 
 - `FA_contingent table.csv`:                            Table S2 in supplementary data
 
-- `JASP files`:                                         data stored in .csv formatted for JASP                           
+- `JASP files`:                                         data stored in .csv formatted for JASP
 
 ---
 
